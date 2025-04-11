@@ -10,9 +10,22 @@
 		3E1635DE2DA9ADF100F0BC04 /* FetchRecipes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FetchRecipes.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		3E16362A2DA9BBC900F0BC04 /* Exceptions for "FetchRecipes" folder in "FetchRecipes" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 3E1635DD2DA9ADF100F0BC04 /* FetchRecipes */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		3E1635E02DA9ADF100F0BC04 /* FetchRecipes */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				3E16362A2DA9BBC900F0BC04 /* Exceptions for "FetchRecipes" folder in "FetchRecipes" target */,
+			);
 			path = FetchRecipes;
 			sourceTree = "<group>";
 		};
