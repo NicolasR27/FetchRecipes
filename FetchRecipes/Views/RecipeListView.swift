@@ -12,10 +12,45 @@ struct RecipeListView: View {
         Group {
             if viewModel.isLoading {
                 ProgressView()
-            } else if let error = viewModel.error {
-                ErrorView(error: error, retryAction: { Task { await viewModel.fetchRecipes() } })
+            } else if let error = viewModel.error as? RecipeServiceError {
+                switch error {
+                case .malformedData:
+                    ContentUnavailableView {
+                        Label("Invalid Data", systemImage: "exclamationmark.triangle")
+                    } description: {
+                        Text("The recipe data appears to be invalid or corrupted.")
+                    } actions: {
+                        Button("Try Again") {
+                            Task { await viewModel.fetchRecipes() }
+                        }
+                    }
+                case .emptyData:
+                    ContentUnavailableView {
+                        Label("No Recipes", systemImage: "fork.knife")
+                    } description: {
+                        Text("There are no recipes available at the moment.")
+                    } actions: {
+                        Button("Refresh") {
+                            Task { await viewModel.fetchRecipes() }
+                        }
+                    }
+                default:
+                    ContentUnavailableView {
+                        Label("Network Error", systemImage: "wifi.slash")
+                    } description: {
+                        Text(error.localizedDescription)
+                    } actions: {
+                        Button("Try Again") {
+                            Task { await viewModel.fetchRecipes() }
+                        }
+                    }
+                }
             } else if viewModel.recipes.isEmpty {
-                EmptyStateView()
+                ContentUnavailableView {
+                    Label("No Recipes", systemImage: "fork.knife")
+                } description: {
+                    Text("Pull to refresh to load recipes")
+                }
             } else {
                 List(viewModel.recipes) { recipe in
                     NavigationLink(value: RecipeListCoordinator.Destination.recipeDetail(recipe)) {
@@ -60,43 +95,6 @@ private struct RecipeRowView: View {
             }
         }
         .padding(.vertical, 4)
-    }
-}
-
-private struct ErrorView: View {
-    let error: Error
-    let retryAction: () -> Void
-    
-    var body: some View {
-        VStack {
-            Image(systemName: "exclamationmark.triangle")
-                .font(.largeTitle)
-                .foregroundStyle(.red)
-            Text("Error loading recipes")
-                .font(.headline)
-            Text(error.localizedDescription)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-            Button("Retry", action: retryAction)
-                .buttonStyle(.borderedProminent)
-        }
-        .padding()
-    }
-}
-
-private struct EmptyStateView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "list.bullet.clipboard")
-                .font(.largeTitle)
-                .foregroundStyle(.secondary)
-            Text("No recipes available")
-                .font(.headline)
-            Text("Pull to refresh to try again")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-        }
-        .padding()
     }
 }
 
